@@ -10,7 +10,7 @@ public class Constants {
 
     public static final Difficulty DEFAULT_DIFFICULTY = Difficulty.REGULAR;
 
-    public static final int PERIOD_MILLIS = 20;  // szybkość odświeżania canvas
+    public static final int PERIOD_MILLIS = 30;  // szybkość odświeżania canvas
 
 //    prędkości
     public static final int RACKET_SPEED = 15;
@@ -25,7 +25,7 @@ public class Constants {
 //    rakieta
     public static final double RACKET_WIDTH = 120;
     public static final double RACKET_HEIGHT = 30;
-    public static final double RACKET_DISTANCE_FROM_BOTTOM_BORDER = CANVAS_HEIGHT - 25;
+    public static final double RACKET_H_POS = CANVAS_HEIGHT - 30;
 
 //    wielkość piłki
     public static final double BALL_RADIUS = 10;
@@ -49,8 +49,11 @@ public class Constants {
 //    granice w których porusza się piłka
     public static final double BALL_BORDER_HEIGHT_MIN = BORDER_MIN;
     public static final double BALL_BORDER_WIDTH_MIN = BORDER_MIN;
-    public static final double BALL_BORDER_HEIGHT_MAX = CANVAS_HEIGHT - BORDER_MAX - BALL_RADIUS;
+    public static final double BALL_BORDER_HEIGHT_MAX = CANVAS_HEIGHT + 50;
     public static final double BALL_BORDER_WIDTH_MAX = CANVAS_WIDTH - BORDER_MAX - BALL_RADIUS;
+
+    public static final double BLL_START_W_POS = CANVAS_WIDTH / 2 - BALL_RADIUS;
+    public static final double BLL_START_H_POS = RACKET_H_POS - BALL_RADIUS -20;
 
 
 

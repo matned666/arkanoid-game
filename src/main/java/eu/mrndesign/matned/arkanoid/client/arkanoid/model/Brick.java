@@ -1,84 +1,34 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.model;
 
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.DEFAULT_BRICK_HEIGHT;
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.DEFAULT_BRICK_WIDTH;
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Images.*;
+public class Brick {
 
-public class Brick implements DestroyableObject {
+    private int hitPts;
+    private Coordinate coordinate;
+    private boolean isVisible;
 
-    private double brickWPos;
-    private double brickHPos;
-    private double width;
-    private double height;
-    private int hitsToDestroy;
-    private String brickImage;
-
-    public Brick(int hitsToDestroy) {
-        this.hitsToDestroy = hitsToDestroy;
-        width = DEFAULT_BRICK_WIDTH;
-        height = DEFAULT_BRICK_HEIGHT;
-        brickImage = getImage();
+    public Brick(int hitPts, Coordinate coordinate) {
+        this.hitPts = hitPts;
+        this.coordinate = coordinate;
+        isVisible = true;
     }
 
-    public String getImage() {
-        switch (this.hitsToDestroy){
-            case 1: return BRICK0;
-            case 2: return BRICK1;
-            case 3: return BRICK2;
-            default: return EMPTY_BRICK;
-        }
+    public int getHitPts() {
+        return hitPts;
     }
 
-
-    @Override
-    public double getHPos() {
-        return brickHPos;
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 
-    @Override
-    public double getWPos() {
-        return brickWPos;
+    public void setHitPts(int hitPts) {
+        this.hitPts = hitPts;
     }
 
-    @Override
-    public void setHPos(double pos) {
-        brickHPos = pos;
+    public boolean isVisible() {
+        return isVisible;
     }
 
-    @Override
-    public void setWPos(double pos) {
-        brickWPos = pos;
-    }
-
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-
-    @Override
-    public int getHitsToDestroy() {
-        return hitsToDestroy;
-    }
-
-    @Override
-    public void setHitsToDestroy(int hitsToDestroy) {
-        this.hitsToDestroy = hitsToDestroy;
-    }
-
-
-    @Override
-    public String toString() {
-        return "Brick{" +
-                ", width=" + width +
-                ", height=" + height +
-                ", hitsToDestroy=" + hitsToDestroy +
-                ", brickImage='" + brickImage + '\'' +
-                '}';
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }

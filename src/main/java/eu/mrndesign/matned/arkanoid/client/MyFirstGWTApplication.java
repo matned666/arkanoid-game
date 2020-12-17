@@ -35,7 +35,6 @@ public class MyFirstGWTApplication implements EntryPoint {
             if (gameWidget != null) RootPanel.get(canvasDivTag).remove(gameWidget);
 
             gameWidget = new CanvasWidget(Difficulty.valueOf(difficulties.getSelectedItemText()));
-            gameWidget.start();
             RootPanel.get(canvasDivTag).add(gameWidget);
 
         });
