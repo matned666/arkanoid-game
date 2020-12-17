@@ -196,6 +196,7 @@ public class GameCore implements GameContract.Presenter {
 
     private List<Coordinate> ballCoordinates(){
         ballCoordinates.clear();
+        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos ));
         ballCoordinates.add(new Coordinate(ballWPos, ballHPos + BALL_RADIUS));
         ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos + 2*BALL_RADIUS));
         ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS*2, ballHPos + BALL_RADIUS));
@@ -205,6 +206,12 @@ public class GameCore implements GameContract.Presenter {
 
     private boolean isOnRacket() {
         return ballCoordinates().stream().anyMatch(this::coordinateInRacket);
+    }
+
+    private boolean isOnBrick(Brick brick) {
+        return ballCoordinates().stream().anyMatch(x->{
+            return false;
+        });
     }
 
     private boolean coordinateInRacket(Coordinate x) {
