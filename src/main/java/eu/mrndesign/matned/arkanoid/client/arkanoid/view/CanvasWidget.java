@@ -10,6 +10,7 @@ import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Difficulty;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.core.GameCore;
 
+import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Messages.POINTS;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 
 public class CanvasWidget extends Composite implements GameContract.View {
@@ -54,14 +55,16 @@ public class CanvasWidget extends Composite implements GameContract.View {
 
     @Override
     public void refreshCanvas() {
-        CssColor color = CssColor.make("rgba(" + 0 + ", "
-                + 0 + "," + 0 + ", " + 1 + ")");
+        CssColor color = CssColor.make("rgba(" + 255 + ", "
+                + 255 + "," + 255 + ", " + 1 + ")");
 
         context.setFillStyle(color);
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         ImageElement img = ImageElement.as(new Image("img/background1.jpg").getElement());
         context.drawImage(img, BORDER_MIN, BORDER_MIN, CANVAS_WIDTH - BORDER_MAX, CANVAS_HEIGHT);
-
+        context.fillRect(POINTS_POSITION_W - 30, POINTS_POSITION_H-8, CANVAS_WIDTH, 10);
+        context.strokeText(POINTS, POINTS_POSITION_W - 28, POINTS_POSITION_H);
+        context.strokeText(String.valueOf(gameCore.getGame().getPoints()), POINTS_POSITION_W+20, POINTS_POSITION_H);
         gameCore.putBricks(context);
         launchBall();
         launchRacket();

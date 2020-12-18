@@ -17,7 +17,7 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 
 public class GameCore implements GameContract.Presenter {
 
-    public static final int BALL_MAX_SPEED = 9;
+
     private Game game;
     private Difficulty difficulty;
 
@@ -27,9 +27,9 @@ public class GameCore implements GameContract.Presenter {
 
     private int racketCurrentSpeed;
 
-
+    private boolean hasStarted;
     private double ballPreviousWPos;
-    private double ballPreviousHPos;
+
     private double ballWPos;
     private double ballHPos;
     private double racketWPos;
@@ -37,6 +37,11 @@ public class GameCore implements GameContract.Presenter {
     private GameContract.View view;
     private Context2d context;
     private List<Coordinate> ballCoordinates;
+
+    private List<Brick> bricks;
+    private Brick brickToRemove;
+    private Coordinate racketHitCoordinate;
+    private Coordinate brickHitCoordinate;
 
     private static final double racketHPos = RACKET_H_POS;
 
@@ -48,21 +53,30 @@ public class GameCore implements GameContract.Presenter {
     }
 
     private void init() {
+        hasStarted = false;
         ballPreviousWPos = BLL_START_W_POS;
-        ballPreviousHPos = BLL_START_H_POS;
         ballWPos = BLL_START_W_POS;
         ballHPos = BLL_START_H_POS;
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
-        ballWSpeed = BALL_SPEED;
-        ballHSpeed = BALL_SPEED;
+        ballWSpeed = 0;
+        ballHSpeed = 0;
         racketCurrentSpeed = 0;
         Levels lvl = new Level1();
         game = new Game(difficulty, new Level(lvl));
         ballCoordinates = new LinkedList<>();
+        racketHitCoordinate = new Coordinate();
+        brickHitCoordinate = new Coordinate();
     }
 
     @Override
     public void onKeyHit(Canvas canvas) {
+        canvas.addClickHandler(clickEvent -> {
+            if (!hasStarted) {
+                ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+                ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+                hasStarted = true;
+            }
+        });
         canvas.addKeyDownHandler(keyDownEvent -> {
             if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
                 racketCurrentSpeed = (int) (RACKET_SPEED * -1);
@@ -74,6 +88,7 @@ public class GameCore implements GameContract.Presenter {
                 speedSlowdown = 0;
 
             }
+
         });
 
         canvas.addKeyUpHandler(keyUpEvent -> {
@@ -91,6 +106,7 @@ public class GameCore implements GameContract.Presenter {
         ballGo();
         ballBounceOfBorders();
         ballBounceOfRacket();
+        ballBounceFromBrick();
     }
 
 
@@ -108,12 +124,11 @@ public class GameCore implements GameContract.Presenter {
 
     @Override
     public void putBricks(Context2d context) {
-        List<Brick> bricks = game.getLevel().getLevel().getBricks();
+        bricks = game.getLevel().getLevel().getBricks();
         for (Brick el : bricks) {
             ImageElement img = ImageElement.as(new Image("img/" + Levels.getImage(el)).getElement());
             context.drawImage(img, el.getCoordinate().getX(), el.getCoordinate().getY());
         }
-
     }
 
     public double getRacketWPos() {
@@ -130,15 +145,13 @@ public class GameCore implements GameContract.Presenter {
 
     private void ballGo() {
         ballPreviousWPos = ballWPos;
-        ballPreviousHPos = ballHPos;
         ballWPos = ballWPos - ballWSpeed;
         ballHPos = ballHPos - ballHSpeed;
     }
 
-    private void ballBounceOfBricks(){
-
-    }
-
+    /**
+     * Opcje odbicia od ściany - koniec końcem powinien być zrobiony generycznie wraz z paletką i cegłami
+     */
     private void ballBounceOfBorders() {
         if (ballHPos <= BALL_BORDER_HEIGHT_MIN || ballHPos >= BALL_BORDER_HEIGHT_MAX) {
             ballHSpeed = ballHSpeed * -1;
@@ -150,6 +163,9 @@ public class GameCore implements GameContract.Presenter {
         }
     }
 
+    /**
+     * Efekt dźwiękowy zderzenia
+     */
     private Audio makeAudio;
 
     {
@@ -162,61 +178,134 @@ public class GameCore implements GameContract.Presenter {
     }
 
 
+    /**
+     * Sprawdzam czy piłka zderzyła się z paletką
+     */
     private void ballBounceOfRacket() {
         if (isOnRacket())
-            if (ballWPos > ballPreviousWPos) {
-                ballBounceOfRacketInner(1);
-            } else ballBounceOfRacketInner(-1);
+                ballBounceOfRacketInner();
     }
 
-    private void ballBounceOfRacketInner(int i) {
-//        TODO
-        if (ballWPos + BALL_RADIUS >= racketWPos && ballWPos +BALL_RADIUS <= racketWPos + 10 ) {
-            ballWSpeed = i > 0 ?1:15;
-            ballHSpeed = (i > 0 ?15:1) * -1;
-        } else if (ballWPos + BALL_RADIUS > racketWPos + 10 && ballWPos+BALL_RADIUS <= racketWPos + 30) {
-            ballWSpeed = i > 0 ?3:7;
-            ballHSpeed = (i > 0 ?7:3) * -1;
-        } else if (ballWPos + BALL_RADIUS > racketWPos + 30 && ballWPos +BALL_RADIUS<= racketWPos + 70) {
-            ballWSpeed = i > 0 ?7:3;
-            ballHSpeed = (i > 0 ?3:7) * -1;
-        } else if (ballWPos + BALL_RADIUS > racketWPos + 70 && ballWPos +BALL_RADIUS<= racketWPos + 110) {
-            ballWSpeed = i > 0 ?7:3;
-            ballHSpeed = (i > 0 ?3:7) * -1;
-        } else if (ballWPos + BALL_RADIUS > racketWPos + 110 && ballWPos+BALL_RADIUS <= racketWPos + 120) {
-            ballWSpeed = i > 0 ?15:1;
-            ballHSpeed = (i > 0 ?1:15) * -1;
-        } else {
-//            if (ballWPos + BALL_RADIUS > racketWPos + 40 && ballWPos+BALL_RADIUS <= racketWPos + 80) {
-            ballHSpeed *= -1;
+    /**
+     * Ciąg dalszy.
+     * Ponższe zmienne dają optymalny wynik dla wygodnego funkcjonowania gry
+     * equalizer >> dzieli długość paletki na odcinki - odliczając ich ilość przy długości paletki 120 - eq. wynosi 10
+     * compressor >> dzieli długość paletki na odcinki - obliczając ich długości względem paletki paletki 120 - eq. wynosi 12
+     * variable 1 i 2 >> (variable1 - Math.abs(-variable2 + j / equalizer) - tworzy odwróconą parabolę, dzięki której
+     *                                                                       wartości najwyższe są po środku.
+     * difficulty.multiplicand() >> metoda Difficulty >> iloczyn prętkości danego poziomu trudności
+     */
+    private void ballBounceOfRacketInner() {
+        int equalizer = (int) (RACKET_WIDTH / 12);
+        int compressor = (int) (RACKET_WIDTH / equalizer);
+        int variable1 = (int) (RACKET_WIDTH / 17);
+        int variable2 = (int) (RACKET_WIDTH / 20);
+
+        for (int j = 0; j < RACKET_WIDTH + equalizer; j = j + equalizer) {
+            if (ballWPos >= racketWPos - RACKET_WIDTH / compressor + j && ballWPos < racketWPos + equalizer + j) {
+                ballWSpeed = (int) ((-1 * RACKET_WIDTH / 2 + j) / equalizer * difficulty.multiplicand()) * -1;
+                ballHSpeed = (int) ((variable1 - Math.abs(-variable2 + j / equalizer)) * difficulty.multiplicand());
+            }
         }
         hitSound();
-        ballHPos = RACKET_H_POS - 20;
+        ballHPos = RACKET_H_POS - BALL_RADIUS * 2;
     }
 
-    private List<Coordinate> ballCoordinates(){
+    /**
+     * Tutaj sprawdzam dla każdej cegły została ona w danej klatce dotknięta piłką
+     * Jeśli tak, to zmieniam kolor , albo jeśli jest już czerwona ,
+     * to ją oznaczam jako do usunięcia z listy
+     */
+    private void ballBounceFromBrick() {
+        bricks.forEach(x -> {
+            if (isOnBrick(x)) {
+                x.setHitPts(x.getHitPts() - 1);
+                game.setPoints((int) (game.getPoints()+difficulty.multiplicand()));
+                if (x.getHitPts() <= 0)
+                    brickToRemove = x;
+                ballBounceOfBrick();
+
+            }
+        });
+        bricks.remove(brickToRemove);
+    }
+
+    /**
+     * W tej metodzie piłka odbija się od cegiełki w zależności od jej punktu zderzenia
+     */
+    private void ballBounceOfBrick() {
+        switch (brickHitCoordinate.getCoordinateType()) {
+            case TOP:
+            case BOTTOM: {
+                ballHSpeed = ballHSpeed * -1;
+                break;
+            }
+            case LEFT:
+            case RIGHT: {
+                ballWSpeed *= -1;
+                break;
+            }
+        }
+        hitSound();
+    }
+
+
+    /**
+     * obliczam punkty graniczne piłki, obecnie cztery
+     */
+    private List<Coordinate> ballCoordinates() {
         ballCoordinates.clear();
-        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos ));
-        ballCoordinates.add(new Coordinate(ballWPos, ballHPos + BALL_RADIUS));
-        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos + 2*BALL_RADIUS));
-        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS*2, ballHPos + BALL_RADIUS));
+        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos, Coordinate.CoordinateType.LEFT));
+        ballCoordinates.add(new Coordinate(ballWPos, ballHPos + BALL_RADIUS, Coordinate.CoordinateType.TOP));
+        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS, ballHPos + 2 * BALL_RADIUS, Coordinate.CoordinateType.BOTTOM));
+        ballCoordinates.add(new Coordinate(ballWPos + BALL_RADIUS * 2, ballHPos + BALL_RADIUS, Coordinate.CoordinateType.RIGHT));
         return ballCoordinates;
     }
 
-
+    /**
+     * Sprawdzam, czy piłka zderzyła się z paletką
+     */
     private boolean isOnRacket() {
-        return ballCoordinates().stream().anyMatch(this::coordinateInRacket);
+        return bounceCheck(racketWPos, racketHPos,
+                racketWPos + RACKET_WIDTH,
+                racketHPos + RACKET_HEIGHT);
     }
 
+    /**
+     * Sprawdzam czy piłka zderzyła sie z cegłą
+     */
     private boolean isOnBrick(Brick brick) {
-        return ballCoordinates().stream().anyMatch(x->{
+        double bStartX = brick.getCoordinate().getX();
+        double bStartY = brick.getCoordinate().getY();
+        double bEndX = brick.getCoordinate().getX() + BRICK_WIDTH;
+        double bEndY = brick.getCoordinate().getY() + BRICK_HEIGHT;
+        return bounceCheck(bStartX, bStartY, bEndX, bEndY);
+    }
+
+    /**
+     * ...
+     * ciąg dalszy
+     */
+    private boolean bounceCheck(double bStartX, double bStartY, double bEndX, double bEndY) {
+        return ballCoordinates().stream().anyMatch(x -> {
+            double _x = x.getX();
+            double _y = x.getY();
+            if (_x >= bStartX && _x <= bEndX && _y >= bStartY && _y <= bEndY) {
+                setCoordinate(x);
+                return true;
+            }
             return false;
         });
     }
 
-    private boolean coordinateInRacket(Coordinate x) {
-        return x.getX() >= racketWPos && x.getX() <= racketWPos + RACKET_WIDTH
-                && x.getY() >= racketHPos && x.getY() <= racketHPos + RACKET_HEIGHT;
+    /**
+     * zmieniam aktualny koordynat zderzenia
+     */
+    private void setCoordinate(Coordinate data) {
+        brickHitCoordinate = new Coordinate(data.getX(), data.getY(), data.getCoordinateType());
     }
 
+    public Game getGame() {
+        return game;
+    }
 }

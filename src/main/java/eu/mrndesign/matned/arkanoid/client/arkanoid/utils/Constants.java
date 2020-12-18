@@ -37,8 +37,8 @@ public class Constants {
 
 
 //    ramka canvas
-    public static final double BORDER_MIN = 10;
-    public static final double BORDER_MAX = 20;
+    public static final double BORDER_MIN = 0;
+    public static final double BORDER_MAX = 0;
 
     public static final long DEFAULT_TIME = 12000;
 
@@ -54,6 +54,9 @@ public class Constants {
 
     public static final double BLL_START_W_POS = CANVAS_WIDTH / 2 - BALL_RADIUS;
     public static final double BLL_START_H_POS = RACKET_H_POS - BALL_RADIUS -20;
+
+    public static final double POINTS_POSITION_W = CANVAS_WIDTH / 10 * 9;
+    public static final double POINTS_POSITION_H = 30;
 
 
 
