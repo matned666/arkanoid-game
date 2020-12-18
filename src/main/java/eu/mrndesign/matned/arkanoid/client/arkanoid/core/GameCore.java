@@ -1,10 +1,10 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.core;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.user.client.Timer;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.*;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level1;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level2;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
 
 import java.util.LinkedList;
@@ -28,9 +28,12 @@ public class GameCore implements GameContract.Presenter {
 
     private boolean hasStarted;
 
+
     private double ballWPos;
     private double ballHPos;
     private double racketWPos;
+
+    private Timer countDownTimer;
 
     private GameContract.View view;
     private List<Coordinate> ballCoordinates;
@@ -71,46 +74,7 @@ public class GameCore implements GameContract.Presenter {
         showLifes();
     }
 
-    private void showLifes() {
-        view.showLives(game.getLives());
-    }
 
-    private void lifeLost() {
-        if (ballHPos > CANVAS_HEIGHT) {
-            ballHSpeed = 0;
-            ballWSpeed = 0;
-            ballWPos = racketWPos;
-            ballHPos = BLL_START_H_POS;
-            hasStarted = false;
-            game.lostLife();
-        }
-    }
-
-    private void deadYouAre() {
-        if (game.getLives() <= 0) {
-            stopTheBall();
-            view.gameOver(DEAD);
-        }
-    }
-
-    private void stopTheBall() {
-        ballWSpeed = 0;
-        ballHSpeed = 0;
-    }
-
-    private void levelDone() {
-        if (bricks.size() == 0) {
-            stopTheBall();
-            view.levelWon();
-        }
-    }
-
-    private void timeUp() {
-        if (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0) {
-            stopTheBall();
-            view.gameOver(TIME_HAS_PASSED);
-        }
-    }
 
     /**
      * Key handlers -
@@ -121,16 +85,16 @@ public class GameCore implements GameContract.Presenter {
     public void onKeyHit(Canvas canvas) {
         canvas.addClickHandler(clickEvent -> {
             if (!hasStarted) {
-                startTeBall();
+                startTheBall();
             }
         });
         canvas.addKeyDownHandler(keyDownEvent -> {
             if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
                 racketCurrentSpeed = (RACKET_SPEED * -1);
                 speedSlowdown = 0;
-                if (keyDownEvent.isUpArrow() && !hasStarted) {
-                    startTeBall();
-                }
+            }
+            if (keyDownEvent.isUpArrow() && !hasStarted) {
+                startTheBall();
             }
             if (keyDownEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
                 racketCurrentSpeed = RACKET_SPEED;
@@ -148,11 +112,8 @@ public class GameCore implements GameContract.Presenter {
         });
     }
 
-    private void startTeBall() {
-        ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
-        ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
-        hasStarted = true;
-    }
+
+
 
     @Override
     public void launchBall() {
@@ -203,6 +164,68 @@ public class GameCore implements GameContract.Presenter {
     private void ballGo() {
         ballWPos = ballWPos - ballWSpeed;
         ballHPos = ballHPos - ballHSpeed;
+    }
+
+    private void startTheBall() {
+        ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+        ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+        hasStarted = true;
+        startTheCountDown();
+    }
+
+    private void startTheCountDown() {
+        countDownTimer = new Timer() {
+            @Override
+            public void run() {
+                game.getTimer().timeElapse();
+            }
+        };
+        countDownTimer.scheduleRepeating(1000); // odświerza co 1 sekundę
+    }
+
+
+    private void showLifes() {
+        view.showLives(game.getLives());
+    }
+
+    private void lifeLost() {
+        if (ballHPos > CANVAS_HEIGHT) {
+            ballHSpeed = 0;
+            ballWSpeed = 0;
+            ballWPos = racketWPos;
+            ballHPos = BLL_START_H_POS;
+            hasStarted = false;
+            game.lostLife();
+        }
+    }
+
+    private void deadYouAre() {
+        if (game.getLives() <= 0) {
+            stopTheBall();
+            view.gameOver(DEAD);
+            countDownTimer.cancel();
+        }
+    }
+
+    private void stopTheBall() {
+        ballWSpeed = 0;
+        ballHSpeed = 0;
+    }
+
+    private void levelDone() {
+        if (bricks.size() == 0) {
+            stopTheBall();
+            view.levelWon();
+            countDownTimer.cancel();
+        }
+    }
+
+    private void timeUp() {
+        if (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0) {
+            stopTheBall();
+            view.gameOver(TIME_HAS_PASSED);
+            countDownTimer.cancel();
+        }
     }
 
     /**

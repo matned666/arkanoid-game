@@ -110,7 +110,6 @@ public class CanvasWidget extends Composite implements GameContract.View {
     }
 
     private String getTime() {
-
         return Texts.REMAINING_TIME +gameCore.getGame().getTimer().minutes() + ":" + gameCore.getGame().getTimer().seconds();
     }
 
