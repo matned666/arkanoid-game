@@ -3,6 +3,7 @@ package eu.mrndesign.matned.arkanoid.client.arkanoid.core;
 import com.google.gwt.canvas.client.Canvas;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.*;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level1;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level2;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
 
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
+import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Sounds.BALL_HIT_MP3;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
@@ -51,7 +53,7 @@ public class GameCore implements GameContract.Presenter {
         ballHPos = BLL_START_H_POS;
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
         racketCurrentSpeed = 0;
-        Levels lvl = new Level2();
+        Levels lvl = new Level1();
         game = new Game(difficulty, new Level(lvl));
         ballCoordinates = new LinkedList<>();
         brickHitCoordinate = new Coordinate();
@@ -209,14 +211,13 @@ public class GameCore implements GameContract.Presenter {
     private void ballBounceOfBorders() {
         if (ballHPos <= BALL_BORDER_HEIGHT_MIN || ballHPos >= BALL_BORDER_HEIGHT_MAX) {
             ballHSpeed = ballHSpeed * -1;
-            GameAudio.sound("ball_hit.mp3");
+            GameAudio.sound(BALL_HIT_MP3);
         }
         if (ballWPos <= BALL_BORDER_WIDTH_MIN || ballWPos >= BALL_BORDER_WIDTH_MAX) {
             ballWSpeed = ballWSpeed * -1;
-            GameAudio.sound("ball_hit.mp3");
+            GameAudio.sound(BALL_HIT_MP3);
         }
     }
-
 
 
     /**
@@ -224,7 +225,7 @@ public class GameCore implements GameContract.Presenter {
      */
     private void ballBounceOfRacket() {
         if (isOnRacket())
-                ballBounceOfRacketInner();
+            ballBounceOfRacketInner();
     }
 
     /**
@@ -233,7 +234,7 @@ public class GameCore implements GameContract.Presenter {
      * equalizer >> dzieli długość paletki na odcinki - odliczając ich ilość przy długości paletki 120 - eq. wynosi 10
      * compressor >> dzieli długość paletki na odcinki - obliczając ich długości względem paletki paletki 120 - eq. wynosi 12
      * variable 1 i 2 >> (variable1 - Math.abs(-variable2 + j / equalizer) - tworzy odwróconą parabolę, dzięki której
-     *                                                                       wartości najwyższe są po środku.
+     * wartości najwyższe są po środku.
      * difficulty.multiplicand() >> metoda Difficulty >> iloczyn prętkości danego poziomu trudności
      */
     private void ballBounceOfRacketInner() {
@@ -248,7 +249,7 @@ public class GameCore implements GameContract.Presenter {
                 ballHSpeed = (int) ((variable1 - Math.abs(-variable2 + j / equalizer)) * difficulty.multiplicand());
             }
         }
-        GameAudio.sound("ball_hit.mp3");
+        GameAudio.sound(BALL_HIT_MP3);
         ballHPos = RACKET_H_POS - BALL_RADIUS * 2;
     }
 
@@ -261,7 +262,7 @@ public class GameCore implements GameContract.Presenter {
         bricks.forEach(x -> {
             if (isOnBrick(x)) {
                 x.setHitPts(x.getHitPts() - 1);
-                game.setPoints((int) (game.getPoints()+difficulty.multiplicand()));
+                game.setPoints((int) (game.getPoints() + difficulty.multiplicand()));
                 if (x.getHitPts() <= 0)
                     brickToRemove = x;
                 ballBounceOfBrick();
@@ -275,19 +276,19 @@ public class GameCore implements GameContract.Presenter {
      * W tej metodzie piłka odbija się od cegiełki w zależności od jej punktu zderzenia
      */
     private void ballBounceOfBrick() {
-        switch (brickHitCoordinate.getCoordinateType()) {
-            case TOP:
-            case BOTTOM: {
-                ballHSpeed = ballHSpeed * -1;
-                break;
-            }
-            case LEFT:
-            case RIGHT: {
-                ballWSpeed *= -1;
-                break;
-            }
+        GameAudio.sound(BALL_HIT_MP3);
+        if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.BOTTOM)) {
+            ballHSpeed = ballHSpeed * -1;
         }
-        GameAudio.sound("ball_hit.mp3");
+        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.LEFT)) {
+            ballHSpeed = ballHSpeed * -1;
+        }
+        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.TOP)) {
+            ballWSpeed = ballWSpeed * -1;
+        }
+        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.RIGHT)) {
+            ballWSpeed = ballWSpeed * -1;
+        }
     }
 
 
@@ -345,8 +346,6 @@ public class GameCore implements GameContract.Presenter {
     private void setCoordinate(Coordinate data) {
         brickHitCoordinate = new Coordinate(data.getX(), data.getY(), data.getCoordinateType());
     }
-
-
 
 
 }
