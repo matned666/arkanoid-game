@@ -1,22 +1,19 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.core;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.media.client.Audio;
-import com.google.gwt.user.client.ui.Image;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.*;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level1;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level2;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
+import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
+import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
 public class GameCore implements GameContract.Presenter {
-
 
     private Game game;
     private Difficulty difficulty;
@@ -28,19 +25,16 @@ public class GameCore implements GameContract.Presenter {
     private int racketCurrentSpeed;
 
     private boolean hasStarted;
-    private double ballPreviousWPos;
 
     private double ballWPos;
     private double ballHPos;
     private double racketWPos;
 
     private GameContract.View view;
-    private Context2d context;
     private List<Coordinate> ballCoordinates;
 
     private List<Brick> bricks;
     private Brick brickToRemove;
-    private Coordinate racketHitCoordinate;
     private Coordinate brickHitCoordinate;
 
     private static final double racketHPos = RACKET_H_POS;
@@ -48,47 +42,98 @@ public class GameCore implements GameContract.Presenter {
     public GameCore(Difficulty difficulty, GameContract.View view) {
         this.view = view;
         this.difficulty = difficulty;
-        context = view.getContext();
         init();
     }
 
     private void init() {
         hasStarted = false;
-        ballPreviousWPos = BLL_START_W_POS;
         ballWPos = BLL_START_W_POS;
         ballHPos = BLL_START_H_POS;
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
-        ballWSpeed = 0;
-        ballHSpeed = 0;
         racketCurrentSpeed = 0;
-        Levels lvl = new Level1();
+        Levels lvl = new Level2();
         game = new Game(difficulty, new Level(lvl));
         ballCoordinates = new LinkedList<>();
-        racketHitCoordinate = new Coordinate();
         brickHitCoordinate = new Coordinate();
     }
+
+    /**
+     * Różne akcje gry
+     */
+    @Override
+    public void listenToTheGame() {
+        lifeLost();
+        timeUp();
+        levelDone();
+        deadYouAre();
+        showLifes();
+    }
+
+    private void showLifes() {
+        view.showLives(game.getLives());
+    }
+
+    private void lifeLost() {
+        if (ballHPos > CANVAS_HEIGHT) {
+            ballHSpeed = 0;
+            ballWSpeed = 0;
+            ballWPos = racketWPos;
+            ballHPos = BLL_START_H_POS;
+            hasStarted = false;
+            game.lostLife();
+        }
+    }
+
+    private void deadYouAre() {
+        if (game.getLives() <= 0) {
+            stopTheBall();
+            view.gameOver(DEAD);
+        }
+    }
+
+    private void stopTheBall() {
+        ballWSpeed = 0;
+        ballHSpeed = 0;
+    }
+
+    private void levelDone() {
+        if (bricks.size() == 0) {
+            stopTheBall();
+            view.levelWon();
+        }
+    }
+
+    private void timeUp() {
+        if (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0) {
+            stopTheBall();
+            view.gameOver(TIME_HAS_PASSED);
+        }
+    }
+
+    /**
+     * Key handlers -
+     * - strzałka do góry
+     */
 
     @Override
     public void onKeyHit(Canvas canvas) {
         canvas.addClickHandler(clickEvent -> {
             if (!hasStarted) {
-                ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
-                ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
-                hasStarted = true;
+                startTeBall();
             }
         });
         canvas.addKeyDownHandler(keyDownEvent -> {
             if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
-                racketCurrentSpeed = (int) (RACKET_SPEED * -1);
+                racketCurrentSpeed = (RACKET_SPEED * -1);
                 speedSlowdown = 0;
-
+                if (keyDownEvent.isUpArrow() && !hasStarted) {
+                    startTeBall();
+                }
             }
             if (keyDownEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
-                racketCurrentSpeed = (int) RACKET_SPEED;
+                racketCurrentSpeed = RACKET_SPEED;
                 speedSlowdown = 0;
-
             }
-
         });
 
         canvas.addKeyUpHandler(keyUpEvent -> {
@@ -99,6 +144,12 @@ public class GameCore implements GameContract.Presenter {
                 speedSlowdown = 5;
             }
         });
+    }
+
+    private void startTeBall() {
+        ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+        ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
+        hasStarted = true;
     }
 
     @Override
@@ -123,12 +174,9 @@ public class GameCore implements GameContract.Presenter {
     }
 
     @Override
-    public void putBricks(Context2d context) {
+    public void putBricks() {
         bricks = game.getLevel().getLevel().getBricks();
-        for (Brick el : bricks) {
-            ImageElement img = ImageElement.as(new Image("img/" + Levels.getImage(el)).getElement());
-            context.drawImage(img, el.getCoordinate().getX(), el.getCoordinate().getY());
-        }
+        view.putBricks(bricks);
     }
 
     public double getRacketWPos() {
@@ -143,8 +191,14 @@ public class GameCore implements GameContract.Presenter {
         return ballHPos;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    /**
+     * Piłka startuje
+     */
     private void ballGo() {
-        ballPreviousWPos = ballWPos;
         ballWPos = ballWPos - ballWSpeed;
         ballHPos = ballHPos - ballHSpeed;
     }
@@ -155,27 +209,14 @@ public class GameCore implements GameContract.Presenter {
     private void ballBounceOfBorders() {
         if (ballHPos <= BALL_BORDER_HEIGHT_MIN || ballHPos >= BALL_BORDER_HEIGHT_MAX) {
             ballHSpeed = ballHSpeed * -1;
-            hitSound();
+            GameAudio.sound("ball_hit.mp3");
         }
         if (ballWPos <= BALL_BORDER_WIDTH_MIN || ballWPos >= BALL_BORDER_WIDTH_MAX) {
             ballWSpeed = ballWSpeed * -1;
-            hitSound();
+            GameAudio.sound("ball_hit.mp3");
         }
     }
 
-    /**
-     * Efekt dźwiękowy zderzenia
-     */
-    private Audio makeAudio;
-
-    {
-        makeAudio = Audio.createIfSupported();
-        makeAudio.setSrc("snd/ball_hit.mp3");
-    }
-
-    public void hitSound() {
-        makeAudio.play();
-    }
 
 
     /**
@@ -207,7 +248,7 @@ public class GameCore implements GameContract.Presenter {
                 ballHSpeed = (int) ((variable1 - Math.abs(-variable2 + j / equalizer)) * difficulty.multiplicand());
             }
         }
-        hitSound();
+        GameAudio.sound("ball_hit.mp3");
         ballHPos = RACKET_H_POS - BALL_RADIUS * 2;
     }
 
@@ -246,7 +287,7 @@ public class GameCore implements GameContract.Presenter {
                 break;
             }
         }
-        hitSound();
+        GameAudio.sound("ball_hit.mp3");
     }
 
 
@@ -305,7 +346,7 @@ public class GameCore implements GameContract.Presenter {
         brickHitCoordinate = new Coordinate(data.getX(), data.getY(), data.getCoordinateType());
     }
 
-    public Game getGame() {
-        return game;
-    }
+
+
+
 }

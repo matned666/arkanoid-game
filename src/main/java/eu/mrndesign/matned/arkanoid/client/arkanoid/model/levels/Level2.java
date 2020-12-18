@@ -17,14 +17,20 @@ public class Level2 extends Levels {
     }
 
     @Override
+    public Levels getNextLevel() {
+        return null;
+    }
+
+    @Override
     public String getLayout() {
-        return      ".##$%%$##." +
-                    "$##$%%$##$" +
-                    "$##$%%$##$" +
-                    ".##$%%$##." +
-                    ".........." +
-                    ".........." +
-                    "..........";
+        return      ".##$%$##.!" +
+                    "$##$%$##$!" +
+                    "$##$%$##$!" +
+                    ".##$%$##.!";
+    }
+
+    public List<Brick> getBricks() {
+        return bricks;
     }
 
     @Override

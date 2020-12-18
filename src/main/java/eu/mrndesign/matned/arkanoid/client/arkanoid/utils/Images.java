@@ -5,6 +5,8 @@ public class Images {
     //    obrazy
 
 
+    public static String GAME_OVER_IMAGE = "gameover.png";
+    public static String LEVEL_DONE_IMAGE = "leveldone.png";
     public static String BALL_IMAGE = "ball.png";
     public static String RACKET_IMAGE = "racket.png";
     public static String BRICK0 = "brick0.jpg";

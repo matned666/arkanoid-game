@@ -19,7 +19,7 @@ public class MyFirstGWTApplication implements EntryPoint {
     ListBox difficulties;
 
     public void onModuleLoad() {
-
+        final Timer timer;
         button = new Button(START);
         difficulties = new ListBox();
         for (Difficulty d :
@@ -30,22 +30,22 @@ public class MyFirstGWTApplication implements EntryPoint {
 
         RootPanel.get(menuDivTag).add(button);
         RootPanel.get(menuDivTag).add(difficulties);
-
-        button.addClickHandler(clickEvent -> {
-            if (gameWidget != null) RootPanel.get(canvasDivTag).remove(gameWidget);
-
-            gameWidget = new CanvasWidget(Difficulty.valueOf(difficulties.getSelectedItemText()));
-            RootPanel.get(canvasDivTag).add(gameWidget);
-
-        });
-
-        final Timer timer = new Timer() {
+        timer = new Timer() {
             @Override
             public void run() {
                 gameWidget.refreshCanvas();
             }
         };
-        timer.scheduleRepeating(PERIOD_MILLIS);
+
+        button.addClickHandler(clickEvent -> {
+            if (gameWidget != null) RootPanel.get(canvasDivTag).remove(gameWidget);
+            timer.scheduleRepeating(PERIOD_MILLIS);
+            gameWidget = new CanvasWidget(Difficulty.valueOf(difficulties.getSelectedItemText()));
+            RootPanel.get(canvasDivTag).add(gameWidget);
+
+        });
+
+
 
     }
 

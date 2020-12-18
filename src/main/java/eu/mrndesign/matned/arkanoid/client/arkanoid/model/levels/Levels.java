@@ -3,7 +3,6 @@ package eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Brick;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Coordinate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
@@ -22,6 +21,9 @@ public abstract class Levels {
     }
 
     protected List<Brick> bricks;
+
+    public abstract Levels getNextLevel();
+
     public abstract String getLayout();
 
     public abstract long getTimeInMillis();

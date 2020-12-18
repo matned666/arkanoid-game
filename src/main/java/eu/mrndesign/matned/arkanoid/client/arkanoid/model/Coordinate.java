@@ -24,24 +24,13 @@ public class Coordinate {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
 
     public double getY() {
         return y;
     }
 
-    public void setY(double y) {
-        this.y = y;
-    }
-
     public CoordinateType getCoordinateType() {
         return coordinateType;
-    }
-
-    public void setCoordinateType(CoordinateType coordinateType) {
-        this.coordinateType = coordinateType;
     }
 
     @Override

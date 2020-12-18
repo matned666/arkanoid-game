@@ -18,15 +18,11 @@ Run/Debug Configurations are in img/Screenshot_6.png
 and don't forget to install the GWT plugin for IntelliJ
 
 For Eclipse it is almost the same.
-
-For other IDE - are there any other?
+NetBeans - I don't know
+Notepad too.
 
 
 ```
-
-In order for the program to work, with your own database
-you have to add to application.properties file all necessary data:
-
 
 It is in development stage, so look forward for future features and don't care about the bugs, this is my first web app in GWT ;P:
 

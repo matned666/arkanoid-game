@@ -2,7 +2,6 @@ package eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels;
 
 
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Brick;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Coordinate;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,11 +14,20 @@ public class Level1 extends Levels {
     public Level1() {
         bricks = new LinkedList<>();
         generateBricks(bricks);
+
+    }
+
+    @Override
+    public Levels getNextLevel() {
+        return new Level2();
     }
 
     @Override
     public String getLayout() {
-        return      ".#$###$#.!#$$%%%$$#!###$$$###!#########!";
+        return  ".#$###$#.!" +
+                "#$$%%%$$#!" +
+                "###$$$###!" +
+                "#########!";
     }
 
     public List<Brick> getBricks() {
