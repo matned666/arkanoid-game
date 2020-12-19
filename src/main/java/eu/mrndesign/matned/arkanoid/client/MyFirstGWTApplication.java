@@ -3,6 +3,7 @@ package eu.mrndesign.matned.arkanoid.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.core.DEAL;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Difficulty;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.view.CanvasWidget;
 
@@ -15,8 +16,8 @@ public class MyFirstGWTApplication implements EntryPoint {
     static final String canvasDivTag = "gameCanvas";
     static final String menuDivTag = "gameMenu";
     private CanvasWidget gameWidget;
-    Button button;
-    ListBox difficulties;
+    private Button button;
+    private ListBox difficulties;
 
     public void onModuleLoad() {
         final Timer timer;
@@ -36,7 +37,7 @@ public class MyFirstGWTApplication implements EntryPoint {
                 gameWidget.refreshCanvas();
             }
         };
-
+        DEAL.getInstance().setTimer(timer);
         button.addClickHandler(clickEvent -> {
             if (gameWidget != null) RootPanel.get(canvasDivTag).remove(gameWidget);
             timer.scheduleRepeating(PERIOD_MILLIS);
@@ -44,9 +45,6 @@ public class MyFirstGWTApplication implements EntryPoint {
             RootPanel.get(canvasDivTag).add(gameWidget);
 
         });
-
-
-
     }
 
 

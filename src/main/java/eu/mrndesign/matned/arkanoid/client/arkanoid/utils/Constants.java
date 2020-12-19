@@ -31,7 +31,7 @@ public class Constants {
     public static final double BORDER_MIN = 0;
     public static final double BORDER_MAX = 0;
 
-    public static final long DEFAULT_TIME = 210000;
+    public static final long DEFAULT_TIME = 400000;
 
 //    granice w których porusza się rakieta
     public static final double RACKET_MAX_LEFT = BORDER_MIN;

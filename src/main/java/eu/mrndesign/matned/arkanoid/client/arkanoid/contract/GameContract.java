@@ -2,6 +2,7 @@ package eu.mrndesign.matned.arkanoid.client.arkanoid.contract;
 
 import com.google.gwt.canvas.client.Canvas;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Brick;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Game;
 
 import java.util.List;
 
@@ -13,9 +14,7 @@ public class GameContract {
         void launchBall();
         void gameOver(String message);
         void levelWon();
-
-        void putBricks(List<Brick> bricks);
-
+        void showBricks(List<Brick> bricks);
         void showLives(int lives);
     }
 
@@ -26,6 +25,9 @@ public class GameContract {
         void launchBall();
         double getBallWPos();
         double getBallHPos();
-        void putBricks();
+        void putBricksToMemory();
+        double getRacketWPos();
+        Game getGame();
+
     }
 }

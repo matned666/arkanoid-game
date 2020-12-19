@@ -7,26 +7,26 @@ import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.DEFAULT_TIME;
 
-public class Level2 extends Levels {
+public class Level3 extends Levels {
 
     private List<Brick> bricks;
 
-    public Level2() {
+    public Level3() {
         bricks = new LinkedList<>();
         generateBricks(bricks);
     }
 
     @Override
     public Levels getNextLevel() {
-        return new Level3();
+        return new Level4();
     }
 
     @Override
     public String getLayout() {
-        return      ".##$%$##.!" +
-                    "$##$%$##$!" +
-                    "$##$%$##$!" +
-                    ".##$%$##.!";
+        return      "$$%%%%.%%!" +
+                    "$##%%%.$$!" +
+                    "$#.....#$!" +
+                    "$$##%$$$$!";
     }
 
     public List<Brick> getBricks() {

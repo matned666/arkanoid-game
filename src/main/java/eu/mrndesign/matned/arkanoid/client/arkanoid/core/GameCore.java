@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Sounds.BALL_HIT_MP3;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
@@ -84,9 +83,6 @@ public class GameCore implements GameContract.Presenter {
     @Override
     public void onKeyHit(Canvas canvas) {
         canvas.addClickHandler(clickEvent -> {
-            if (!hasStarted) {
-                startTheBall();
-            }
         });
         canvas.addKeyDownHandler(keyDownEvent -> {
             if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
@@ -137,9 +133,9 @@ public class GameCore implements GameContract.Presenter {
     }
 
     @Override
-    public void putBricks() {
+    public void putBricksToMemory() {
         bricks = game.getLevel().getLevel().getBricks();
-        view.putBricks(bricks);
+        view.showBricks(bricks);
     }
 
     public double getRacketWPos() {
@@ -180,6 +176,7 @@ public class GameCore implements GameContract.Presenter {
                 game.getTimer().timeElapse();
             }
         };
+        DEAL.getInstance().setClock(countDownTimer);
         countDownTimer.scheduleRepeating(1000); // odświerza co 1 sekundę
     }
 
@@ -234,11 +231,11 @@ public class GameCore implements GameContract.Presenter {
     private void ballBounceOfBorders() {
         if (ballHPos <= BALL_BORDER_HEIGHT_MIN || ballHPos >= BALL_BORDER_HEIGHT_MAX) {
             ballHSpeed = ballHSpeed * -1;
-            GameAudio.sound(BALL_HIT_MP3);
+            GameAudio.pingSound();
         }
         if (ballWPos <= BALL_BORDER_WIDTH_MIN || ballWPos >= BALL_BORDER_WIDTH_MAX) {
             ballWSpeed = ballWSpeed * -1;
-            GameAudio.sound(BALL_HIT_MP3);
+            GameAudio.pingSound();
         }
     }
 
@@ -272,7 +269,7 @@ public class GameCore implements GameContract.Presenter {
                 ballHSpeed = (int) ((variable1 - Math.abs(-variable2 + j / equalizer)) * difficulty.multiplicand());
             }
         }
-        GameAudio.sound(BALL_HIT_MP3);
+        GameAudio.pingSound();
         ballHPos = RACKET_H_POS - BALL_RADIUS * 2;
     }
 
@@ -299,7 +296,7 @@ public class GameCore implements GameContract.Presenter {
      * W tej metodzie piłka odbija się od cegiełki w zależności od jej punktu zderzenia
      */
     private void ballBounceOfBrick() {
-        GameAudio.sound(BALL_HIT_MP3);
+        GameAudio.pingSound();
         if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.BOTTOM)) {
             ballHSpeed = ballHSpeed * -1;
         }
