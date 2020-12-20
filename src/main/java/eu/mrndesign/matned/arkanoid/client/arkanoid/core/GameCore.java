@@ -11,8 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
-import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
 public class GameCore implements GameContract.Presenter {
 
@@ -55,7 +53,8 @@ public class GameCore implements GameContract.Presenter {
      * inicjuję nowy etap gry
      */
     private void init() {
-        if (lvl == null) lvl = new Level1();
+        if (lvl == null)
+            lvl = new Level1(); // aby sprawdzić jak działa wygranie etapu, wystarczy zmienić na TestLevel();
         else lvl = lvl.getNextLevel();
 
         hasStarted = false;
@@ -64,14 +63,30 @@ public class GameCore implements GameContract.Presenter {
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
         racketCurrentSpeed = 0;
         game = game != null ?
-                new Game(difficulty, new Level(lvl), game.getPoints() ):
-                new Game(difficulty, new Level(lvl) );
+                new Game.GameBuilder(new Level(lvl))
+                        .difficulty(difficulty)
+                        .points(game.getPoints())
+                        .lives(game.getLives())
+                        .build() :
+                new Game.GameBuilder(new Level(lvl))
+                        .difficulty(difficulty)
+                        .lives(difficulty.getLives())
+                        .build();
         ballCoordinates = new LinkedList<>();
         brickHitCoordinate = new Coordinate();
+        game.setHoldMoment(true);
     }
 
     @Override
     public void initializeNewLevel() {
+        TimeWrapper.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+        hasStarted = false;
+        game.setGameState(GameState.PLAYING);
         init();
         TimeWrapper.getInstance().runTimer();
     }
@@ -82,9 +97,8 @@ public class GameCore implements GameContract.Presenter {
     @Override
     public void listenToTheGame() {
         lifeLost();
-        timeUp();
         levelDone();
-        deadYouAre();
+        gameOver();
     }
 
 
@@ -102,8 +116,8 @@ public class GameCore implements GameContract.Presenter {
         });
         canvas.addClickHandler(clickEvent -> {
             if (game.getGameState() == GameState.LEVEL_DONE) {
+                game.setHoldMoment(false);
                 initializeNewLevel();
-                game.setGameState(GameState.PLAYING);
             }
             if (game.getGameState() == GameState.PLAYING) {
                 startTheBall();
@@ -186,7 +200,7 @@ public class GameCore implements GameContract.Presenter {
     }
 
     private void mouseMovementCore() {
-        racketWPos = MouseListener.getInstance().mouseX - RACKET_WIDTH /2;
+        racketWPos = MouseListener.getInstance().mouseX - RACKET_WIDTH / 2;
         if (racketWPos + RACKET_WIDTH >= CANVAS_WIDTH)
             racketWPos = CANVAS_WIDTH - RACKET_WIDTH;
         if (racketWPos <= 0)
@@ -222,29 +236,20 @@ public class GameCore implements GameContract.Presenter {
         }
     }
 
-    private void deadYouAre() {
+    private void gameOver() {
         if (game.getLives() <= 0) {
             game.setGameState(GameState.GAME_OVER);
             stopTheBall();
-            view.gameOver(DEAD);
+            view.gameOver();
             countDownTimer.cancel();
         }
     }
 
     private void levelDone() {
-        if (bricks.size() == 0) {
+        if (bricks.size() == 0 || (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0)) {
             game.setGameState(GameState.LEVEL_DONE);
             stopTheBall();
             view.levelWon();
-            countDownTimer.cancel();
-        }
-    }
-
-    private void timeUp() {
-        if (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0) {
-            game.setGameState(GameState.GAME_OVER);
-            stopTheBall();
-            view.gameOver(TIME_HAS_PASSED);
             countDownTimer.cancel();
         }
     }

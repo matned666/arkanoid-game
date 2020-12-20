@@ -12,7 +12,7 @@ public class GameContract {
         Canvas createCanvas();
         void refreshCanvas();
         void launchBall();
-        void gameOver(String message);
+        void gameOver();
         void levelWon();
         void showBricks(List<Brick> bricks);
     }

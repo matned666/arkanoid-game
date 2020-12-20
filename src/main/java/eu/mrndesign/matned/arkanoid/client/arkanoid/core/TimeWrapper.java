@@ -23,6 +23,7 @@ public class TimeWrapper {
     }
 
     private long frameNo;
+    private long previousFrameNo;
     private Timer timer;
     private Timer clock;
 
@@ -51,6 +52,7 @@ public class TimeWrapper {
     }
 
     public void nextFrame(){
+        previousFrameNo = frameNo;
         frameNo++;
     }
 

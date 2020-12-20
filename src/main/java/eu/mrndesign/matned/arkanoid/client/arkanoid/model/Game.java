@@ -9,26 +9,20 @@ public class Game {
     private int points;
     private Difficulty difficulty;
     private Level level;
-    private Timer timer;
     private int lives;
+
+    private Timer timer;
     private GameState gameState;
+    private boolean holdMoment;
 
-    public Game(Difficulty difficulty, Level level) {
-        this.difficulty = difficulty;
-        this.level = level;
-        init(difficulty);
+    private Game(GameBuilder builder) {
+        this.difficulty = builder.difficulty;
+        this.level = builder.level;
+        this.points = builder.points;
+        init();
     }
 
-    public Game(Difficulty difficulty, Level level, int points) {
-        this.difficulty = difficulty;
-        this.level = level;
-        this.points = points;
-        init(difficulty);
-    }
-
-    private void init(Difficulty difficulty) {
-        lives = difficulty.getLives();
-        points = 0;
+    private void init() {
         timer = new Timer(Timer.getMinutes(DEFAULT_TIME), Timer.getSeconds(DEFAULT_TIME));
         gameState = GameState.PLAYING;
     }
@@ -39,6 +33,14 @@ public class Game {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public boolean isHoldMoment() {
+        return holdMoment;
+    }
+
+    public void setHoldMoment(boolean holdMoment) {
+        this.holdMoment = holdMoment;
     }
 
     public void lostLife() {
@@ -88,5 +90,37 @@ public class Game {
                 "difficulty=" + difficulty +
                 ", level=" + level +
                 '}';
+    }
+
+    public static class GameBuilder{
+
+        private Level level;
+        private int points;
+        private Difficulty difficulty;
+        private int lives;
+
+        public GameBuilder(Level level) {
+            this.level = level;
+        }
+
+        public GameBuilder points(int points){
+            this.points = points;
+            return this;
+        }
+
+        public GameBuilder difficulty(Difficulty difficulty){
+            this.difficulty = difficulty;
+            return this;
+        }
+
+        public GameBuilder lives(int lives){
+            this.lives = lives;
+            return this;
+        }
+
+        public Game build(){
+            return new Game(this);
+        }
+
     }
 }

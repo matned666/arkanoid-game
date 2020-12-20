@@ -109,22 +109,22 @@ public class CanvasWidget extends Composite implements GameContract.View {
     }
 
     @Override
-    public void gameOver(String message) {
+    public void gameOver() {
         levelEndsWithResult(GAME_OVER_IMAGE, 164, 40);
-        GameAudio.gameOverSound();
+        if (gameCore.getGame().isHoldMoment())GameAudio.gameOverSound();
+        gameCore.getGame().setHoldMoment(false);
         stopTimer();
     }
 
     @Override
     public void levelWon() {
         levelEndsWithResult(LEVEL_DONE_IMAGE, 420, 120);
-        GameAudio.levelWinSound();
+        if (gameCore.getGame().isHoldMoment())GameAudio.levelWinSound();
+        gameCore.getGame().setHoldMoment(false);
         stopTimer();
     }
 
     private void levelEndsWithResult(String gameOverImage, int x, int y) {
-        if (TimeWrapper.getInstance().getFrameNo() > 4)
-            TimeWrapper.getInstance().resetFrame(); // resetuje klatki jeśli już nie zostały zresetowane
         ImageElement img = ImageElement.as(new Image("img/" + gameOverImage).getElement());
         context.drawImage(img, x, y);
     }
