@@ -26,6 +26,7 @@ public class GameCore implements GameContract.Presenter {
 
     protected int speedSlowdown = 0;
     private boolean hasStarted;
+    private boolean isBallShoot;
 
 
     private double ballWPos;
@@ -39,7 +40,6 @@ public class GameCore implements GameContract.Presenter {
     private List<Brick> bricks;
     private Brick brickToRemove;
     private Coordinate brickHitCoordinate;
-
 
     private Levels lvl;
 
@@ -82,6 +82,7 @@ public class GameCore implements GameContract.Presenter {
                         .difficulty(difficulty)
                         .lives(difficulty.getLives())
                         .build();
+        isBallShoot = false;
     }
 
     @Override
@@ -126,7 +127,7 @@ public class GameCore implements GameContract.Presenter {
                 game.setHoldMoment(false);
                 initializeNewLevel();
             }
-            if (game.getGameState() == GameState.PLAYING) {
+            if (game.getGameState() == GameState.PLAYING && !isBallShoot) {
                 startTheBall();
             }
         });
@@ -218,6 +219,7 @@ public class GameCore implements GameContract.Presenter {
         ballWSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
         ballHSpeed = (int) (BALL_SPEED * difficulty.multiplicand());
         hasStarted = true;
+        isBallShoot = true;
         startTheCountDown();
     }
 
@@ -234,6 +236,7 @@ public class GameCore implements GameContract.Presenter {
 
     private void lifeLost() {
         if (ballHPos > CANVAS_HEIGHT) {
+            isBallShoot = false;
             ballHSpeed = 0;
             ballWSpeed = 0;
             ballWPos = racketWPos + RACKET_WIDTH/2;
@@ -323,7 +326,7 @@ public class GameCore implements GameContract.Presenter {
         bricks.forEach(x -> {
             if (isOnBrick(x)) {
                 x.setHitPts(x.getHitPts() - 1);
-                game.setPoints((int) (game.getPoints() + difficulty.multiplicand()));
+                game.setPoints((int) (game.getPoints() + difficulty.multiplicand()*2));
                 if (x.getHitPts() <= 0)
                     brickToRemove = x;
                 ballBounceOfBrick();
