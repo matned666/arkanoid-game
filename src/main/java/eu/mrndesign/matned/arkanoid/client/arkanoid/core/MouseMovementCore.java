@@ -4,8 +4,10 @@ public abstract class MouseMovementCore {
 
     protected double mouseX;
     protected double mouseY;
+    protected double racketWPos;
 
-    void mouseMovementCore(double racketX, double racketY){
+
+    protected void mouseMovementCore(double racketX, double racketY){
 
     }
 

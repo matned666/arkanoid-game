@@ -14,7 +14,7 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
-public class GameCore implements GameContract.Presenter {
+public class GameCore extends MouseMovementCore implements GameContract.Presenter {
 
     private Game game;
     private Difficulty difficulty;
@@ -30,7 +30,6 @@ public class GameCore implements GameContract.Presenter {
 
     private double ballWPos;
     private double ballHPos;
-    private double racketWPos;
 
     private Timer countDownTimer;
 
@@ -43,22 +42,37 @@ public class GameCore implements GameContract.Presenter {
 
     private static final double racketHPos = RACKET_H_POS;
 
+    private Levels lvl;
+
     public GameCore(Difficulty difficulty, GameContract.View view) {
         this.view = view;
         this.difficulty = difficulty;
         init();
     }
 
+    /**
+     * inicjuję nowy etap gry
+     */
     private void init() {
+        if (lvl == null) lvl = new Level1();
+        else lvl = lvl.getNextLevel();
+
         hasStarted = false;
         ballWPos = BLL_START_W_POS;
         ballHPos = BLL_START_H_POS;
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
         racketCurrentSpeed = 0;
-        Levels lvl = new Level1();
-        game = new Game(difficulty, new Level(lvl));
+        game = game != null ?
+                new Game(difficulty, new Level(lvl), game.getPoints() ):
+                new Game(difficulty, new Level(lvl) );
         ballCoordinates = new LinkedList<>();
         brickHitCoordinate = new Coordinate();
+    }
+
+    @Override
+    public void initializeNewLevel() {
+        init();
+        TimeWrapper.getInstance().runTimer();
     }
 
     /**
@@ -70,9 +84,7 @@ public class GameCore implements GameContract.Presenter {
         timeUp();
         levelDone();
         deadYouAre();
-        showLifes();
     }
-
 
 
     /**
@@ -82,7 +94,15 @@ public class GameCore implements GameContract.Presenter {
 
     @Override
     public void onKeyHit(Canvas canvas) {
+        canvas.addMouseOverHandler(mouseOverEvent -> {
+            MouseListener.getInstance().setMouseX(mouseOverEvent.getRelativeX(canvas.getElement()));
+            MouseListener.getInstance().setMouseY(mouseOverEvent.getRelativeY(canvas.getElement()));
+        });
         canvas.addClickHandler(clickEvent -> {
+            if (game.getGameState() == GameState.LEVEL_DONE) {
+                initializeNewLevel();
+                game.setGameState(GameState.PLAYING);
+            }
         });
         canvas.addKeyDownHandler(keyDownEvent -> {
             if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
@@ -107,8 +127,6 @@ public class GameCore implements GameContract.Presenter {
             }
         });
     }
-
-
 
 
     @Override
@@ -176,13 +194,8 @@ public class GameCore implements GameContract.Presenter {
                 game.getTimer().timeElapse();
             }
         };
-        DEAL.getInstance().setClock(countDownTimer);
+        TimeWrapper.getInstance().setClock(countDownTimer);
         countDownTimer.scheduleRepeating(1000); // odświerza co 1 sekundę
-    }
-
-
-    private void showLifes() {
-        view.showLives(game.getLives());
     }
 
     private void lifeLost() {
@@ -198,19 +211,16 @@ public class GameCore implements GameContract.Presenter {
 
     private void deadYouAre() {
         if (game.getLives() <= 0) {
+            game.setGameState(GameState.GAME_OVER);
             stopTheBall();
             view.gameOver(DEAD);
             countDownTimer.cancel();
         }
     }
 
-    private void stopTheBall() {
-        ballWSpeed = 0;
-        ballHSpeed = 0;
-    }
-
     private void levelDone() {
         if (bricks.size() == 0) {
+            game.setGameState(GameState.LEVEL_DONE);
             stopTheBall();
             view.levelWon();
             countDownTimer.cancel();
@@ -219,10 +229,16 @@ public class GameCore implements GameContract.Presenter {
 
     private void timeUp() {
         if (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0) {
+            game.setGameState(GameState.GAME_OVER);
             stopTheBall();
             view.gameOver(TIME_HAS_PASSED);
             countDownTimer.cancel();
         }
+    }
+
+    private void stopTheBall() {
+        ballWSpeed = 0;
+        ballHSpeed = 0;
     }
 
     /**
@@ -299,14 +315,11 @@ public class GameCore implements GameContract.Presenter {
         GameAudio.pingSound();
         if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.BOTTOM)) {
             ballHSpeed = ballHSpeed * -1;
-        }
-        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.LEFT)) {
+        } else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.LEFT)) {
             ballHSpeed = ballHSpeed * -1;
-        }
-        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.TOP)) {
+        } else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.TOP)) {
             ballWSpeed = ballWSpeed * -1;
-        }
-        else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.RIGHT)) {
+        } else if (brickHitCoordinate.getCoordinateType().equals(Coordinate.CoordinateType.RIGHT)) {
             ballWSpeed = ballWSpeed * -1;
         }
     }

@@ -15,10 +15,10 @@ public class GameContract {
         void gameOver(String message);
         void levelWon();
         void showBricks(List<Brick> bricks);
-        void showLives(int lives);
     }
 
     public interface Presenter{
+        void initializeNewLevel();
         void listenToTheGame();
         void onKeyHit(Canvas canvas);
         void racketMove();

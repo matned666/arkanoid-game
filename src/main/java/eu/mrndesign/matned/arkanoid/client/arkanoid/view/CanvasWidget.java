@@ -6,7 +6,7 @@ import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.user.client.ui.*;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.core.DEAL;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.core.TimeWrapper;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.core.GameAudio;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Brick;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Difficulty;
@@ -66,16 +66,26 @@ public class CanvasWidget extends Composite implements GameContract.View {
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         ImageElement img = ImageElement.as(new Image("img/"+BACKGROUND_IMAGE).getElement());
         context.drawImage(img, BORDER_MIN, BORDER_MIN, CANVAS_WIDTH - BORDER_MAX, CANVAS_HEIGHT);
-        context.fillRect(POINTS_POSITION_W - 30, POINTS_POSITION_H-8, CANVAS_WIDTH-5, 10);
-        context.strokeText(POINTS, POINTS_POSITION_W - 28, POINTS_POSITION_H);
-        context.strokeText(String.valueOf(gameCore.getGame().getPoints()), POINTS_POSITION_W+20, POINTS_POSITION_H);
-        context.fillRect(POINTS_POSITION_W - 30, POINTS_POSITION_H+2, CANVAS_WIDTH-5, 10);
-        context.strokeText(getTime(), POINTS_POSITION_W - 28, POINTS_POSITION_H+10);
+        getGameLiveInformations();
         gameCore.putBricksToMemory();
         launchBall();
         launchRacket();
         gameCore.listenToTheGame();
-        DEAL.getInstance().nextFrame();
+        TimeWrapper.getInstance().nextFrame();
+    }
+
+    private void getGameLiveInformations() {
+        // Prostokąt z punktami
+        context.fillRect(POINTS_POSITION_W - 30, POINTS_POSITION_H-8, CANVAS_WIDTH-5, 10);
+        context.strokeText(POINTS, POINTS_POSITION_W - 28, POINTS_POSITION_H);
+        context.strokeText(String.valueOf(gameCore.getGame().getPoints()), POINTS_POSITION_W+20, POINTS_POSITION_H);
+
+        // Prostokąt z czasem
+        context.fillRect(POINTS_POSITION_W - 30, POINTS_POSITION_H+2, CANVAS_WIDTH-5, 10);
+        context.strokeText(getTime(), POINTS_POSITION_W - 28, POINTS_POSITION_H+10);
+
+        context.fillRect(10, POINTS_POSITION_H-8, 50, 10);
+        context.strokeText(Texts.LIVES + gameCore.getGame().getLives(), 12 , POINTS_POSITION_H);
     }
 
     @Override
@@ -87,12 +97,6 @@ public class CanvasWidget extends Composite implements GameContract.View {
     }
 
     @Override
-    public void showLives(int lives) {
-        context.fillRect(10, POINTS_POSITION_H-8, 50, 10);
-        context.strokeText(Texts.LIVES + lives, 12 , POINTS_POSITION_H);
-    }
-
-    @Override
     public void launchBall() {
         ImageElement img = ImageElement.as(new Image("img/"+BALL_IMAGE).getElement());
         context.drawImage(img, gameCore.getBallWPos(), gameCore.getBallHPos());
@@ -101,28 +105,28 @@ public class CanvasWidget extends Composite implements GameContract.View {
 
     @Override
     public void gameOver(String message) {
-        levelEndsWithResult(GAME_OVER_IMAGE, 120);
+        levelEndsWithResult(GAME_OVER_IMAGE, 164, 40);
         GameAudio.gameOverSound();
         stopTimer();
     }
 
     @Override
     public void levelWon() {
-        levelEndsWithResult(LEVEL_DONE_IMAGE, 420);
+        levelEndsWithResult(LEVEL_DONE_IMAGE, 420, 120);
         GameAudio.levelWinSound();
         stopTimer();
     }
 
-    private void levelEndsWithResult(String gameOverImage, int i) {
-        if (DEAL.getInstance().getFrameNo() > 4)
-            DEAL.getInstance().resetFrame(); // resetuje klatki jeśli już nie zostały zresetowane
+    private void levelEndsWithResult(String gameOverImage, int x, int y) {
+        if (TimeWrapper.getInstance().getFrameNo() > 4)
+            TimeWrapper.getInstance().resetFrame(); // resetuje klatki jeśli już nie zostały zresetowane
         ImageElement img = ImageElement.as(new Image("img/" + gameOverImage).getElement());
-        context.drawImage(img, i, 120);
+        context.drawImage(img, x, y);
     }
 
     private void stopTimer() {
-        if (DEAL.getInstance().getFrameNo() == 4) {
-            DEAL.getInstance().getTimer().cancel();
+        if (TimeWrapper.getInstance().getFrameNo() == 4) {
+            TimeWrapper.getInstance().getTimer().cancel();
         }
     }
 
