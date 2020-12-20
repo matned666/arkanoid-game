@@ -237,7 +237,7 @@ public class GameCore implements GameContract.Presenter {
     }
 
     private void gameOver() {
-        if (game.getLives() <= 0) {
+        if (game.getLives() <= 0 || (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0)) {
             game.setGameState(GameState.GAME_OVER);
             stopTheBall();
             view.gameOver();
@@ -246,7 +246,7 @@ public class GameCore implements GameContract.Presenter {
     }
 
     private void levelDone() {
-        if (bricks.size() == 0 || (game.getTimer().minutes() == 0 && game.getTimer().seconds() == 0)) {
+        if (bricks.size() == 0) {
             game.setGameState(GameState.LEVEL_DONE);
             stopTheBall();
             view.levelWon();
