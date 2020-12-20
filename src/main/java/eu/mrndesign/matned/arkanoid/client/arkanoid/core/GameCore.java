@@ -62,6 +62,16 @@ public class GameCore implements GameContract.Presenter {
         ballHPos = BLL_START_H_POS;
         racketWPos = (BALL_BORDER_WIDTH_MAX / 2) - (RACKET_WIDTH / 2);
         racketCurrentSpeed = 0;
+        buildGame();
+        ballCoordinates = new LinkedList<>();
+        brickHitCoordinate = new Coordinate();
+        game.setHoldMoment(true);
+    }
+
+    /**
+     *  Budujemy grę:
+     */
+    private void buildGame() {
         game = game != null ?
                 new Game.GameBuilder(new Level(lvl))
                         .difficulty(difficulty)
@@ -72,9 +82,6 @@ public class GameCore implements GameContract.Presenter {
                         .difficulty(difficulty)
                         .lives(difficulty.getLives())
                         .build();
-        ballCoordinates = new LinkedList<>();
-        brickHitCoordinate = new Coordinate();
-        game.setHoldMoment(true);
     }
 
     @Override
@@ -229,7 +236,7 @@ public class GameCore implements GameContract.Presenter {
         if (ballHPos > CANVAS_HEIGHT) {
             ballHSpeed = 0;
             ballWSpeed = 0;
-            ballWPos = racketWPos;
+            ballWPos = racketWPos + RACKET_WIDTH/2;
             ballHPos = BLL_START_H_POS;
             hasStarted = false;
             game.lostLife();

@@ -10,9 +10,8 @@ public class GameAudio {
         sound(GAME_OVER_MP_3);
     }
 
-    public static boolean levelWinSound(){
+    public static void levelWinSound(){
         sound(GAME_WIN_MP_3);
-        return true;
     }
 
     public static void pingSound(){

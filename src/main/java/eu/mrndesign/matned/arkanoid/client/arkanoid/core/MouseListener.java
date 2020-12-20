@@ -1,7 +1,5 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.core;
 
-import com.google.gwt.user.client.Timer;
-
 public class MouseListener {
 
     private static MouseListener instance;

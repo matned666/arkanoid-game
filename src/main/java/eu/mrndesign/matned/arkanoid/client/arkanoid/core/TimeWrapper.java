@@ -23,7 +23,6 @@ public class TimeWrapper {
     }
 
     private long frameNo;
-    private long previousFrameNo;
     private Timer timer;
     private Timer clock;
 
@@ -38,11 +37,6 @@ public class TimeWrapper {
         clock.run();
     }
 
-    public void stopTime(){
-        timer.cancel();
-        clock.run();
-    }
-
     public void setClock(Timer clock) {
         this.clock = clock;
     }
@@ -52,7 +46,6 @@ public class TimeWrapper {
     }
 
     public void nextFrame(){
-        previousFrameNo = frameNo;
         frameNo++;
     }
 

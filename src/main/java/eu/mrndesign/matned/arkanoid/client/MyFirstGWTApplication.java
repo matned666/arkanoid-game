@@ -16,12 +16,11 @@ public class MyFirstGWTApplication implements EntryPoint {
     static final String canvasDivTag = "gameCanvas";
     static final String menuDivTag = "gameMenu";
     private CanvasWidget gameWidget;
-    private Button button;
     private ListBox difficulties;
 
     public void onModuleLoad() {
         final Timer timer;
-        button = new Button(START);
+        Button button = new Button(START);
         difficulties = new ListBox();
         for (Difficulty d :
                 Difficulty.values()) {

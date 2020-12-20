@@ -1,7 +1,5 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.model;
 
-import java.util.concurrent.TimeUnit;
-
 public class Timer {
 
     private int minutes;
@@ -38,13 +36,5 @@ public class Timer {
                 seconds = 59;
             }
         }
-    }
-
-    public int getMinutes() {
-        return minutes;
-    }
-
-    public void setMinutes(int minutes) {
-        this.minutes = minutes;
     }
 }

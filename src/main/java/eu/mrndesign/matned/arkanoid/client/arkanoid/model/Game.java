@@ -18,6 +18,7 @@ public class Game {
     private Game(GameBuilder builder) {
         this.difficulty = builder.difficulty;
         this.level = builder.level;
+        this.lives = builder.lives;
         this.points = builder.points;
         init();
     }
@@ -51,10 +52,6 @@ public class Game {
         return lives;
     }
 
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
-
     public Timer getTimer() {
         return timer;
     }
@@ -67,22 +64,9 @@ public class Game {
         this.points = points;
     }
 
-    public Difficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
-    }
-
     public Level getLevel() {
         return level;
     }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
 
     @Override
     public String toString() {
