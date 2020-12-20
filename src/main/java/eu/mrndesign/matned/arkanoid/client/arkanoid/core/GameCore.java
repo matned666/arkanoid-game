@@ -14,17 +14,19 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.DEAD;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts.TIME_HAS_PASSED;
 
-public class GameCore extends MouseMovementCore implements GameContract.Presenter {
+public class GameCore implements GameContract.Presenter {
 
     private Game game;
     private Difficulty difficulty;
 
-    private int speedSlowdown = 0;
     private int ballWSpeed;
     private int ballHSpeed;
 
-    private int racketCurrentSpeed;
+    private static final double racketHPos = RACKET_H_POS;
+    protected double racketWPos;
+    protected int racketCurrentSpeed;
 
+    protected int speedSlowdown = 0;
     private boolean hasStarted;
 
 
@@ -40,7 +42,6 @@ public class GameCore extends MouseMovementCore implements GameContract.Presente
     private Brick brickToRemove;
     private Coordinate brickHitCoordinate;
 
-    private static final double racketHPos = RACKET_H_POS;
 
     private Levels lvl;
 
@@ -94,14 +95,18 @@ public class GameCore extends MouseMovementCore implements GameContract.Presente
 
     @Override
     public void onKeyHit(Canvas canvas) {
-        canvas.addMouseOverHandler(mouseOverEvent -> {
-            MouseListener.getInstance().setMouseX(mouseOverEvent.getRelativeX(canvas.getElement()));
-            MouseListener.getInstance().setMouseY(mouseOverEvent.getRelativeY(canvas.getElement()));
+        canvas.addMouseMoveHandler(mouseDownEvent -> {
+            MouseListener.getInstance().setMouseX(mouseDownEvent.getRelativeX(canvas.getElement()));
+            MouseListener.getInstance().setMouseY(mouseDownEvent.getRelativeY(canvas.getElement()));
+            mouseMovementCore();
         });
         canvas.addClickHandler(clickEvent -> {
             if (game.getGameState() == GameState.LEVEL_DONE) {
                 initializeNewLevel();
                 game.setGameState(GameState.PLAYING);
+            }
+            if (game.getGameState() == GameState.PLAYING) {
+                startTheBall();
             }
         });
         canvas.addKeyDownHandler(keyDownEvent -> {
@@ -178,6 +183,14 @@ public class GameCore extends MouseMovementCore implements GameContract.Presente
     private void ballGo() {
         ballWPos = ballWPos - ballWSpeed;
         ballHPos = ballHPos - ballHSpeed;
+    }
+
+    private void mouseMovementCore() {
+        racketWPos = MouseListener.getInstance().mouseX - RACKET_WIDTH /2;
+        if (racketWPos + RACKET_WIDTH >= CANVAS_WIDTH)
+            racketWPos = CANVAS_WIDTH - RACKET_WIDTH;
+        if (racketWPos <= 0)
+            racketWPos = 0;
     }
 
     private void startTheBall() {
