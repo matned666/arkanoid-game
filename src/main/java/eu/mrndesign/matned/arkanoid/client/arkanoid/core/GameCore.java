@@ -16,7 +16,7 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 
 public class GameCore implements GameContract.Presenter {
 
-    public static final int ONE_SECCOND_IN_MILLIS = 1000;
+    public static final int ONE_SECOND_IN_MILLIS = 1000;
 
     private Game game;
     private Difficulty difficulty;
@@ -207,7 +207,7 @@ public class GameCore implements GameContract.Presenter {
             }
         };
         TimeWrapper.getInstance().setClock(countDownTimer);
-        countDownTimer.scheduleRepeating(ONE_SECCOND_IN_MILLIS); // odświerza co 1 sekundę
+        countDownTimer.scheduleRepeating(ONE_SECOND_IN_MILLIS); // odświerza co 1 sekundę
     }
 
     private void lifeLost() {
