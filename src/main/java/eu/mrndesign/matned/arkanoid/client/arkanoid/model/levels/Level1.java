@@ -8,7 +8,7 @@ import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 
-public class Level1 extends Levels {
+public class Level1 extends BaseLevel {
 
 
     public Level1() {
@@ -18,7 +18,7 @@ public class Level1 extends Levels {
     }
 
     @Override
-    public Levels getNextLevel() {
+    public BaseLevel getNextLevel() {
         return new Level2();
     }
 

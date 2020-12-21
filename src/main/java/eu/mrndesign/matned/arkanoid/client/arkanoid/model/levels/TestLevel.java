@@ -16,7 +16,7 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.DEFAU
  *   na if (lvl == null) lvl = new TestLevel();
  */
 
-public class TestLevel extends Levels {
+public class TestLevel extends BaseLevel {
 
 
     public TestLevel() {
@@ -26,7 +26,7 @@ public class TestLevel extends Levels {
     }
 
     @Override
-    public Levels getNextLevel() {
+    public BaseLevel getNextLevel() {
         return new Level1();
     }
 

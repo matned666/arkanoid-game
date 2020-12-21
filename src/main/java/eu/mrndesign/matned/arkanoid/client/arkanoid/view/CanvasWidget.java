@@ -12,7 +12,7 @@ import eu.mrndesign.matned.arkanoid.client.arkanoid.core.GameAudio;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Brick;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.Difficulty;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.core.GameCore;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.BaseLevel;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Texts;
 
 import java.util.List;
@@ -96,7 +96,7 @@ public class CanvasWidget extends Composite implements GameContract.View {
     @Override
     public void showBricks(List<Brick> bricks) {
         for (Brick el : bricks) {
-            ImageElement img = ImageElement.as(new Image("img/" + Levels.getImage(el)).getElement());
+            ImageElement img = ImageElement.as(new Image("img/" + BaseLevel.getImage(el)).getElement());
             context.drawImage(img, el.getCoordinate().getX(), el.getCoordinate().getY());
         }
     }

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.Timer;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.*;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Level1;
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.BaseLevel;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class GameCore implements GameContract.Presenter {
     private Brick brickToRemove;
     private Coordinate brickHitCoordinate;
 
-    private Levels lvl;
+    private BaseLevel lvl;
 
     public GameCore(Difficulty difficulty, GameContract.View view) {
         this.view = view;

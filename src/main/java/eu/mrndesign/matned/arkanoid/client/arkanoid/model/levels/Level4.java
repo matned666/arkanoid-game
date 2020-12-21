@@ -7,7 +7,7 @@ import java.util.List;
 
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.DEFAULT_TIME;
 
-public class Level4 extends Levels {
+public class Level4 extends BaseLevel {
 
     private List<Brick> bricks;
 
@@ -17,7 +17,7 @@ public class Level4 extends Levels {
     }
 
     @Override
-    public Levels getNextLevel() {
+    public BaseLevel getNextLevel() {
         return new Level5();
     }
 

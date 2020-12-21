@@ -9,7 +9,7 @@ import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.*;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Constants.BRICK_WIDTH;
 import static eu.mrndesign.matned.arkanoid.client.arkanoid.utils.Images.*;
 
-public abstract class Levels {
+public abstract class BaseLevel {
 
     public static String getImage(Brick brick){
         switch (brick.getHitPts()){
@@ -22,7 +22,7 @@ public abstract class Levels {
 
     protected List<Brick> bricks;
 
-    public abstract Levels getNextLevel();
+    public abstract BaseLevel getNextLevel();
 
     public abstract String getLayout();
 

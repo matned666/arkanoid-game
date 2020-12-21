@@ -1,18 +1,18 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.model;
 
-import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.Levels;
+import eu.mrndesign.matned.arkanoid.client.arkanoid.model.levels.BaseLevel;
 
 public class Level {
 
     private long timeInMillis;
-    private Levels level;
+    private BaseLevel level;
 
-    public Level(Levels level) {
+    public Level(BaseLevel level) {
         this.level = level;
         this.timeInMillis = level.getTimeInMillis();
     }
 
-    public Levels getLevel() {
+    public BaseLevel getLevel() {
         return level;
     }
 
