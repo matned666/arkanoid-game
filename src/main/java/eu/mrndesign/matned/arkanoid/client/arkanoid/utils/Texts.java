@@ -3,7 +3,7 @@ package eu.mrndesign.matned.arkanoid.client.arkanoid.utils;
 public class Texts {
 
     //    napis na przycisku start
-    public static final String START = "START";
+    public static final String START = "CHOOSE YOUR DIFFICULTY AND CLICK THIS BUTTON TO START";
 
 
     //    wiadomości

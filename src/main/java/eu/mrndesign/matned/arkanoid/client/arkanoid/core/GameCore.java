@@ -1,6 +1,8 @@
 package eu.mrndesign.matned.arkanoid.client.arkanoid.core;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.user.client.Timer;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.contract.GameContract;
 import eu.mrndesign.matned.arkanoid.client.arkanoid.model.*;
@@ -122,37 +124,9 @@ public class GameCore implements GameContract.Presenter {
             MouseListener.getInstance().setMouseY(mouseDownEvent.getRelativeY(canvas.getElement()));
             mouseMovementCore();
         });
-        canvas.addClickHandler(clickEvent -> {
-            if (game.getGameState() == GameState.LEVEL_DONE) {
-                game.setHoldMoment(false);
-                initializeNewLevel();
-            }
-            if (game.getGameState() == GameState.PLAYING && !isBallShoot) {
-                startTheBall();
-            }
-        });
-        canvas.addKeyDownHandler(keyDownEvent -> {
-            if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
-                racketCurrentSpeed = (RACKET_SPEED * -1);
-                speedSlowdown = 0;
-            }
-            if (keyDownEvent.isUpArrow() && !hasStarted) {
-                startTheBall();
-            }
-            if (keyDownEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
-                racketCurrentSpeed = RACKET_SPEED;
-                speedSlowdown = 0;
-            }
-        });
-
-        canvas.addKeyUpHandler(keyUpEvent -> {
-            if (keyUpEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
-                speedSlowdown = 5;
-            }
-            if (keyUpEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
-                speedSlowdown = 5;
-            }
-        });
+        canvas.addClickHandler(clickEvent -> clickEvents());
+        canvas.addKeyDownHandler(this::arrowsSteering);
+        canvas.addKeyUpHandler(this::holdRacketWhenKeyIsUp);
     }
 
 
@@ -406,6 +380,43 @@ public class GameCore implements GameContract.Presenter {
      */
     private void setCoordinate(Coordinate data) {
         brickHitCoordinate = new Coordinate(data.getX(), data.getY(), data.getCoordinateType());
+    }
+
+
+    /**
+     * metody wewnętrzne sterowania
+     */
+    private void clickEvents() {
+        if (game.getGameState() == GameState.LEVEL_DONE) {
+            game.setHoldMoment(false);
+            initializeNewLevel();
+        }
+        if (game.getGameState() == GameState.PLAYING && !isBallShoot) {
+            startTheBall();
+        }
+    }
+
+    private void arrowsSteering(KeyDownEvent keyDownEvent) {
+        if (keyDownEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
+            racketCurrentSpeed = (RACKET_SPEED * -1);
+            speedSlowdown = 0;
+        }
+        if (keyDownEvent.isUpArrow() && !hasStarted) {
+            startTheBall();
+        }
+        if (keyDownEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
+            racketCurrentSpeed = RACKET_SPEED;
+            speedSlowdown = 0;
+        }
+    }
+
+    private void holdRacketWhenKeyIsUp(KeyUpEvent keyUpEvent) {
+        if (keyUpEvent.isLeftArrow() && racketWPos > RACKET_MAX_LEFT) {
+            speedSlowdown = 5;
+        }
+        if (keyUpEvent.isRightArrow() && racketWPos < RACKET_MAX_RIGHT) {
+            speedSlowdown = 5;
+        }
     }
 
 
