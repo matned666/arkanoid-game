@@ -15,16 +15,19 @@ public class Game {
     private GameState gameState;
     private boolean holdMoment;
 
+    private long time;
+
     private Game(GameBuilder builder) {
         this.difficulty = builder.difficulty;
         this.level = builder.level;
         this.lives = builder.lives;
         this.points = builder.points;
+        this.time = (long) (level.getTimeInMillis() / difficulty.multiplicand());
         init();
     }
 
     private void init() {
-        timer = new Timer(Timer.getMinutes(DEFAULT_TIME), Timer.getSeconds(DEFAULT_TIME));
+        timer = new Timer(Timer.getMinutes(time), Timer.getSeconds(time));
         gameState = GameState.PLAYING;
     }
 

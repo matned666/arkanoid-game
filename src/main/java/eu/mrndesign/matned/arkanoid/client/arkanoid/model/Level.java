@@ -12,6 +12,10 @@ public class Level {
         this.timeInMillis = level.getTimeInMillis();
     }
 
+    public long getTimeInMillis() {
+        return timeInMillis;
+    }
+
     public BaseLevel getLevel() {
         return level;
     }
