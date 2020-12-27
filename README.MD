@@ -8,7 +8,9 @@ with graphics by @matned666 <br>
 For more informations check my website at:
 <html><a href="https://mrndesign.eu/">https://mrndesign.eu</a></html>
 <br>
-Check it out and dont forget to send a feedback !! ;-)
+Check it out and dont forget to send a feedback !! ;-)<br>
+![alt text](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_1.png)
+<br>
 
 ## Usage
 
