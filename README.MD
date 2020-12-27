@@ -1,18 +1,23 @@
 # ARKANOID game
-##GWT
+
+###GWT
 <br>
 My first game in GoogleWeb Toolkit (GWT)  <br>
 A simple game for web browsers <br>
 with graphics by @matned666 <br>
 <br>
 For more informations check my website at:
-<html><a href="https://mrndesign.eu/">https://mrndesign.eu</a></html>
+
 <br>
 Check it out and dont forget to send a feedback !! ;-)<br>
-![alt text](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_1.png)
+
+![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_1.png)
+![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_2.png)
+![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_3.png)
+![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_4.png)
 <br>
 
-## Usage
+### Usage
 
 ```
 For IntelliJ just clone the project, set JDK to 1.8 (the most steady for GWT)
