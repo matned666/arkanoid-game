@@ -1,6 +1,7 @@
 # ARKANOID game
 
 ###GWT
+
 <br>
 My first game in GoogleWeb Toolkit (GWT)  <br>
 A simple game for web browsers <br>
