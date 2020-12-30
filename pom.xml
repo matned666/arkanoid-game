@@ -1,52 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<!-- Using gwt-boot-starter-parent -->
+		<groupId>com.github.gwtboot</groupId>
+		<artifactId>gwt-boot-starter-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath />
+	</parent>
 
-    <groupId>groupId</groupId>
-    <artifactId>MyFirstGWTApplication</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<groupId>game</groupId>
+	<artifactId>arkanoid</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-    <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.google.gwt/gwt-servlet -->
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-            <version>2.9.0</version>
-            <scope>runtime</scope>
-        </dependency>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-        <!-- https://mvnrepository.com/artifact/com.google.gwt/gwt-user -->
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-            <version>2.9.0</version>
-            <scope>provided</scope>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>com.github.gwtboot</groupId>
+			<artifactId>gwt-boot-starter</artifactId>
+		</dependency>
+	</dependencies>
 
-        <!-- https://mvnrepository.com/artifact/com.google.gwt/gwt-dev -->
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <version>2.9.0</version>
-            <scope>provided</scope>
-        </dependency>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.ltgt.gwt.maven</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<configuration>
+					<moduleName>
+						eu.mrndesign.matned.arkanoid.Arkanoid
+					</moduleName>
+					<startupUrls>
+						<url>/arkanoid/</url>
+					</startupUrls>
+					<compilerArgs>
+						<arg>-generateJsInteropExports</arg>
+						<arg>-compileReport</arg>
+						<arg>-style</arg>
+						<arg>PRETTY</arg>
+					</compilerArgs>
+					<devmodeArgs>
+						<arg>-logLevel</arg>
+						<arg>INFO</arg>
+						<arg>-generateJsInteropExports</arg>
+						<arg>-style</arg>
+						<arg>PRETTY</arg>
+					</devmodeArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-
-    </dependencies>
-
-
+	<repositories>
+		<repository>
+			<id>sonatype-snapshots</id>
+			<name>Sonatype Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
