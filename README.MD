@@ -25,9 +25,9 @@ My first game in GoogleWeb Toolkit (GWT)
 A simple game for web browsers
 with graphics by @matned666
 
-For more informations check my website at:
+For more informations check my website at: xxx
 
-Check it out and dont forget to send a feedback !! ;-)<br>
+Check it out and dont forget to send a feedback !! ;-)
 
 ![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_1.png)
 ![Screenshot](https://raw.githubusercontent.com/matned666/MyFirstGWTApplication/brickbuild/war/img/Screenshot_2.png)
@@ -54,6 +54,7 @@ Future TODO is -> much to do
 
 # License
 Copyright 2020 Mateusz Niedbał
+
 Contact: mat.niedbal6@gmail.com
 
 
