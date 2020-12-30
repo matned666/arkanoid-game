@@ -1,6 +1,25 @@
 # ARKANOID game
 
-###GWT
+### Building
+
+This example uses GWT Boot as Starter Parent: https://github.com/gwtboot/gwt-boot-samples
+
+To build the example:
+```
+mvn clean package
+```
+
+To run the example:
+1. First: run the GWT Dev Mode: 
+```
+mvn gwt:generate-module gwt:devmode
+```
+2. Second: open your browser and go to following address:
+```
+http://127.0.0.1:8888/arkanoid/
+```
+
+### GWT
 
 <br>
 My first game in GoogleWeb Toolkit (GWT)  <br>
@@ -39,11 +58,9 @@ Future TODO is -> much to do
 ```
 
 
-
 # License
-  Copyright 2020 Mateusz Niedbał
-  
-  contact:  mat.niedbal6@gmail.com
+Copyright 2020 Mateusz Niedbał
+contact:  mat.niedbal6@gmail.com
 
 
 
