@@ -1,0 +1,7 @@
+<module rename-to="arkanoid">
+  <inherits name="com.github.gwtboot.starter.Starter"/>
+  <inherits name="com.google.gwt.user.theme.clean.Clean"/>
+  <inherits name="com.google.gwt.user.User"/>
+
+  <entry-point class='eu.mrndesign.matned.arkanoid.client.MyFirstGWTApplication'/>
+</module>
