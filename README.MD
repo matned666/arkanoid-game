@@ -21,7 +21,7 @@ http://127.0.0.1:8888/arkanoid/
 
 ### GWT
 
-My first game in GoogleWeb Toolkit (GWT)
+My first game in GWT Web Toolkit (GWT)
 A simple game for web browsers
 with graphics by @matned666
 
